@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\mikol\Source\Repos\Westesc\Programowanie_WSP\Project_wsp\obj\Debug\net7.0-windows\
-Project_wsp_ckvb5ei3_wpftmp
+C:\Users\mikol\source\repos\Westesc\Programowanie_WSP\Project_wsp\obj\Debug\net7.0-windows\
+Project_wsp
 none
 false
-TRACE;RELEASE;NET;NET7_0;NETCOREAPP
-C:\Users\mikol\Source\Repos\Westesc\Programowanie_WSP\Project_wsp\App.xaml
+TRACE;DEBUG;NET;NET7_0;NETCOREAPP
+C:\Users\mikol\source\repos\Westesc\Programowanie_WSP\Project_wsp\App.xaml
 11407045341
 
-5-138493710
-396-1369561714
+3-1233169557
+1981462702791
 MainWindow.xaml;
 
-False
+True
 
