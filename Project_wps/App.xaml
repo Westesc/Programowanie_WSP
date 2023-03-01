@@ -1,7 +1,7 @@
-﻿<Application x:Class="Project_wsp.App"
+﻿<Application x:Class="Project_wps.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Project_wsp"
+             xmlns:local="clr-namespace:Project_wps"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

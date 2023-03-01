@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Project_wsp
+namespace Project_wps
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
