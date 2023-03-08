@@ -25,6 +25,7 @@ bld/
 [Ll]og/
 
 # Visual Studio 2015/2017 cache/options directory
+/Project_wps/.vs/
 .vs/
 .vscode/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -345,3 +346,5 @@ ASALocalRun/
 Network Trash Folder
 Temporary Items
 .apdisk
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
