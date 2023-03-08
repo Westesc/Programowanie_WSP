@@ -3,7 +3,7 @@ using System;
 namespace WPF_TEST {
     public class DummyTest {
 
-        [Fact(Skip = "Skipped because reasons...")]
+        [Fact/*(Skip = "Skipped because reasons...")*/]
         public void FactFalse() {
             Assert.False(false);
         }
