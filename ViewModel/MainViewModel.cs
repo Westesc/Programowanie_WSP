@@ -57,6 +57,8 @@ namespace TPW.Presentation.ViewModel {
             StartSimulation = new RelayCommand(() => {
                 model.SetBallNumber(BallsCount);
 
+                
+
                 for (int i = 0; i < BallsCount; i++)
                 {
                     Circles.Add(new BallProperty());

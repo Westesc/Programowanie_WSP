@@ -44,11 +44,13 @@ internal class BallLogic : IBallLogic {
 	}
 
     public async void Simulate() {
-		while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
+		const int frames60 = 16; //, frames30 = 32, frames1 = 1000;
+
+        while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
 			Position = GetRandomPointInsideBoard();
 			PositionChange?.Invoke(this, new OnPositionChangeEventArgs(this));
-
-			await Task.Delay(32, owner.CancelSimulationSource.Token).ContinueWith(_ => { });
+			
+			await Task.Delay(frames60, owner.CancelSimulationSource.Token).ContinueWith(_ => { });
 		}
 	}
 

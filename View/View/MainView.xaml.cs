@@ -5,5 +5,16 @@ namespace TPW.Presentation.View {
         public MainView() {
             InitializeComponent();
         }
+
+        // THIS NEEDS TO BE IN VIEWMODEL INSTEAD !
+        //private void StartButtonClick(object sender, RoutedEventArgs e) {
+        //    StartBtn.IsEnabled = false;
+        //    StopBtn.IsEnabled = true;
+        //}
+        //
+        //private void StopButtonClick(object sender, RoutedEventArgs e) {
+        //    StartBtn.IsEnabled = true;
+        //    StopBtn.IsEnabled = false;
+        //}
     }
 }
