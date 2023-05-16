@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Data.Components;
+using System.Numerics;
 
 namespace TPW.Data;
 
@@ -10,5 +11,7 @@ public abstract class DataAPI {
 	public abstract IBallData Get(int index);
 	public abstract int GetCount();
 	public static DataAPI CreateBallsList() { return new BallsData(); }
-	public static IBallData CreateBall(Vector2 newPosition) { return new BallData(newPosition); }
+    public static ITransform CreateTransform(Vector2 newPosition, float newRadius) { return new Transform(newPosition, newRadius); }
+    public static IRigidBody CreateRigidBody(Vector2 newVelocity, float newMass) { return new RigidBody(newVelocity, newMass); }
+	public static IBallData CreateBall(ITransform newTransfrom, IRigidBody newRigidBody) { return new BallData(newTransfrom, newRigidBody); }
 }

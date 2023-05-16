@@ -10,6 +10,10 @@ public class BallsLogicTest {
 	private LogicAPI ballsLogic;
 	private readonly Vector2 boardSize = new Vector2(150, 100);
 
+	private readonly Vector2 sharedVelocity = new Vector2(0, 0);
+    private readonly float sharedRadius = 1;
+    private readonly float sharedMass = 1;
+
 	[SetUp]
 	public void SetUp() {
 		ballsLogic = LogicAPI.CreateBalls(boardSize, new DataLayerFixture());
@@ -17,15 +21,27 @@ public class BallsLogicTest {
 
 	[Test]
 	public void AddBallTest() {
-		ballsLogic.AddBall(boardSize / 2);
+		ballsLogic.AddBall(boardSize / 2, sharedRadius, sharedVelocity, sharedMass);
 		Assert.AreEqual(1, ballsLogic.GetBallsCount());
 		Assert.AreEqual(boardSize / 2, ballsLogic.GetBalls()[0].Position);
 	}
 
 	[Test]
 	public void AddBallOutOfBoardTest() {
-		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(boardSize + Vector2.One * 20)));
-		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(Vector2.One * -20)));
+		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(
+			boardSize + Vector2.One * 20, 
+			sharedRadius, 
+			sharedVelocity, 
+			sharedMass
+        )));
+
+		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(
+			Vector2.One * -20,
+            sharedRadius,
+            sharedVelocity,
+            sharedMass
+        )));
+
 		Assert.AreEqual(0, ballsLogic.GetBallsCount());
 	}
 
@@ -46,7 +62,7 @@ public class BallsLogicTest {
 		for (int i = 0; i < ballsLogic.GetBallsCount(); i++)
 			startPositionList.Add(ballsLogic.GetBalls()[i].Position);
 
-		ballsLogic.PositionChange += (_, _) => {
+		ballsLogic.BallChange += (_, _) => {
 			interactionCount++;
 			if (interactionCount >= 50)
 				ballsLogic.StopSimulation();

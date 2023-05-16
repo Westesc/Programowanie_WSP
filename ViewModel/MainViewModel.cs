@@ -57,18 +57,20 @@ namespace TPW.Presentation.ViewModel {
             StartSimulation = new RelayCommand(() => {
                 model.SetBallNumber(BallsCount);
 
-                
-
-                for (int i = 0; i < BallsCount; i++)
-                {
+                for (int i = 0; i < BallsCount; i++) {
                     Circles.Add(new BallProperty());
                 }
 
-                model.BallPositionChange += (sender, argv) =>
-                {
-                    if(Circles.Count > 0)
-                        Circles[argv.id].ChangePosition(argv.position);
+                model.BallRadiusChange += (sender, arguments) => {
+                    if (Circles.Count > 0)
+                        Circles[arguments.id].ChangeRadius(arguments.radius);
                 };
+
+                model.BallPositionChange += (sender, arguments) => {
+                    if (Circles.Count > 0)
+                        Circles[arguments.id].ChangePosition(arguments.position);
+                };
+
                 model.StartSimulation();
             });
 

@@ -20,32 +20,30 @@
 	</Window.DataContext>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="678"/>
+			<ColumnDefinition Width="671"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Width="100" Height="400">
-			<Button Name="StartBtn" Background="#202020" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding StartSimulation}" Margin="0,0,0,5" Width="65"/>
-			<!-- THIS NEEDS TO BE IN VIEWMODEL INSTEAD! IsEnabled="True" Click="StartButtonClick"-->
-			<Button Background="#202020" Content="➕" HorizontalAlignment="Center"
-                    Command="{Binding Increase}" Width="65"/>
+			<Button Background="#202020" Content="➕" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding Increase}"/>
 			<Label HorizontalContentAlignment="Center" 
-				    Content="{Binding BallsCount}" Width="64" />
+				    Content="{Binding BallsCount}" Width="50" />
 			<Button Background="#202020" Content="➖" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding Decrease}" Width="65"/>
-			<Button Name="StopBtn" Background="#202020" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding StopSimulation}" Width="65"/>
-			<!-- THIS NEEDS TO BE IN VIEWMODEL INSTEAD! IsEnabled="False" Click="StopButtonClick"-->
+                    Command="{Binding Decrease}"/>
+			<Button Background="#202020" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding StartSimulation}"/>
+			<Button Background="#202020" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding StopSimulation}"/>
 		</StackPanel>
 		<StackPanel Grid.Column="0" VerticalAlignment="Center" Height="400">
 			<Canvas x:Name="BallCanvas" Height="400" Width="650">
-				<Border BorderBrush="#b0b0b0" BorderThickness="0.5" Height="400" Width="650"/>
+				<Border BorderBrush="#f0f0f0" BorderThickness="1" Height="400" Width="650"/>
 
 				<ItemsControl ItemsSource="{Binding Path = Circles}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate >
 							<Canvas>
-								<Ellipse Width="40" Height="40" Fill="#448844" Stroke="#F0F0F0" StrokeThickness="1">
+								<Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="#448844" Stroke="#F0F0F0" StrokeThickness="2">
 									<Ellipse.RenderTransform>
 										<TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
 									</Ellipse.RenderTransform>

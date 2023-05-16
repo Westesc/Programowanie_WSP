@@ -4,11 +4,21 @@ using TPW.Logic;
 
 public class OnPositionChangeUiAdapterEventArgs : EventArgs {
 
-	public readonly Vector2 position;
     public readonly int id;
+    public readonly Vector2 position;
 
-    public OnPositionChangeUiAdapterEventArgs(Vector2 newPosition, int newId) {
+    public OnPositionChangeUiAdapterEventArgs(int newId, Vector2 newPosition) {
         position = newPosition;
+        id = newId;
+    }
+}
+
+public class OnRadiusChangeUiAdapterEventArgs : EventArgs {
+    public readonly int id;
+    public readonly float radius;
+
+    public OnRadiusChangeUiAdapterEventArgs(int newId, float newRadius) {
+        radius = newRadius;
         id = newId;
     }
 }
@@ -21,13 +31,15 @@ namespace TPW.Presentation.Model {
         private LogicAPI ballsLogic;
 
         public event EventHandler<OnPositionChangeUiAdapterEventArgs>? BallPositionChange;
+        public event EventHandler<OnRadiusChangeUiAdapterEventArgs>? BallRadiusChange;
 
         public MainModel() {
             boardSize = new Vector2(650, 400);
             ballsAmount = 0;
             ballsLogic = LogicAPI.CreateBalls(boardSize);
-            ballsLogic.PositionChange += (sender, args) => {
-                BallPositionChange?.Invoke(this, new OnPositionChangeUiAdapterEventArgs(args.Ball.Position, args.Ball.Id));
+            ballsLogic.BallChange += (sender, arguments) => {
+                BallPositionChange?.Invoke(this, new OnPositionChangeUiAdapterEventArgs(arguments.Ball.Id, arguments.Ball.Position));
+                BallRadiusChange?.Invoke(this, new OnRadiusChangeUiAdapterEventArgs(arguments.Ball.Id, arguments.Ball.Radius));
             };
         }
 
@@ -38,10 +50,12 @@ namespace TPW.Presentation.Model {
 
         public void StopSimulation() {
             ballsLogic.StopSimulation();
+
+            // RESET SO WE CAN START AGAIN
             ballsLogic = LogicAPI.CreateBalls(boardSize);
-            ballsLogic.PositionChange += (sender, args) =>
-            {
-                BallPositionChange?.Invoke(this, new OnPositionChangeUiAdapterEventArgs(args.Ball.Position, args.Ball.Id));
+            ballsLogic.BallChange += (sender, arguments) => {
+                BallPositionChange?.Invoke(this, new OnPositionChangeUiAdapterEventArgs(arguments.Ball.Id, arguments.Ball.Position));
+                BallRadiusChange?.Invoke(this, new OnRadiusChangeUiAdapterEventArgs(arguments.Ball.Id, arguments.Ball.Radius));
             };
         }
 

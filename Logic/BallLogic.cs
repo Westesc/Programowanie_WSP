@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Components;
+using System;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,9 @@ namespace TPW.Logic;
 
 public interface IBallLogic {
 	Vector2 Position { get; set; }
+	float Radius { get; set; }
+	Vector2 Velocity { get; set; }
+	float Mass { get; set; }
 	int Id { get; }
 }
 
@@ -20,59 +24,75 @@ internal class BallLogic : IBallLogic {
 	private readonly BallsLogic owner;
 	private readonly Random random;
 
-	public event EventHandler<OnPositionChangeEventArgs>? PositionChange;
+	public event EventHandler<OnBallChangeEventArgs>? PositionChange;
+    public event EventHandler<OnBallChangeEventArgs>? RadiusChange;
 
-	public int Id { get; private set; }
+    // CONSTRUCTORS
 
-	public BallLogic(IBallData newBall, int newId, BallsLogic newOwner) {
+    public BallLogic(int newId, IBallData newBall, BallsLogic newOwner) {
         random = new Random();
         owner = newOwner;
         ball = newBall;
         Id = newId;
 	}
 
-	public BallLogic(Vector2 newPosition, int newId, BallsLogic newOwner) {
-		ball = DataAPI.CreateBall(newPosition);
+	public BallLogic(int newId, ITransform newTransform, IRigidBody newRigidBody, BallsLogic newOwner) {
+		ball = DataAPI.CreateBall(newTransform, newRigidBody);
         random = new Random();
         owner = newOwner;
         Id = newId;
 	}
 
-	public Vector2 Position {
-		get => ball.Position;
-		set => ball.Position = value;
+	// PROPERTIES
+
+    public int Id { get; private set; }
+
+    public Vector2 Position {
+		get => ball.Transform.Position;
+		set => ball.Transform.Position = value;
 	}
 
-    public async void Simulate() {
-		const int frames60 = 16; //, frames30 = 32, frames1 = 1000;
+	public float Radius {
+        get => ball.Transform.Radius;
+        set => ball.Transform.Radius = value;
+    }
 
-        while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
-			Position = GetRandomPointInsideBoard();
-			PositionChange?.Invoke(this, new OnPositionChangeEventArgs(this));
-			
-			await Task.Delay(frames60, owner.CancelSimulationSource.Token).ContinueWith(_ => { });
+	public Vector2 Velocity {
+        get => ball.RigidBody.Velocity;
+        set => ball.RigidBody.Velocity = value;
+    }
+
+    public float Mass {
+        get => ball.RigidBody.Mass;
+        set => ball.RigidBody.Mass = value;
+    }
+
+    // FUNCTIONS
+
+    public async void Simulate() {
+		while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
+
+            // Change Values
+            Position = MoveInsideBoard(Radius); 
+
+			// Apply Values
+            PositionChange?.Invoke(this, new OnBallChangeEventArgs(this));
+
+            await Task.Delay(16, owner.CancelSimulationSource.Token).ContinueWith(ignored => { });
 		}
 	}
 
-	private Vector2 GetRandomPointInsideBoard() {
-		Vector2 translationVector = GetRandomNormalizedVector();
-		Vector2 newPosition = Position + translationVector;
+    // UTIL
+    public Vector2 MoveInsideBoard(float ballRadius) {
+		Vector2 newPosition = Position + Velocity;
 
-		if(newPosition.X < BallsLogic.BallRadius || newPosition.X > owner.BoardSize.X - BallsLogic.BallRadius)
-			translationVector.X = - translationVector.X;
+		if (newPosition.X < 0 || newPosition.X > owner.BoardSize.X - ballRadius)
+			Velocity = new Vector2(-Velocity.X, Velocity.Y);
 
-		if (newPosition.Y < BallsLogic.BallRadius || newPosition.Y > owner.BoardSize.Y - BallsLogic.BallRadius)
-			translationVector.Y = - translationVector.Y;
+		if (newPosition.Y < 0 || newPosition.Y > owner.BoardSize.Y - ballRadius)
+            Velocity = new Vector2(Velocity.X, -Velocity.Y);
 
-		return Position + translationVector;
+        return Position + Velocity;
 	}
 
-	
-	private Vector2 GetRandomNormalizedVector() {
-		var x = (float)(random.NextDouble() - 0.5) * 2;
-		var y = (float)(random.NextDouble() - 0.5) * 2;
-		var result = new Vector2(x, y);
-
-		return Vector2.Normalize(result);
-	}
 }
