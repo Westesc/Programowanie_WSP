@@ -1,4 +1,5 @@
 ﻿using Data.Components;
+using Logic;
 using Logic.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace TPW.Logic;
 
 internal class BallsLogic : LogicAPI {
 
+    public readonly Mutex simulationPause = new Mutex(false); // CriticalSection Lock
     private readonly DataAPI dataBalls;
 
     public CancellationTokenSource CancelSimulationSource { get; private set; }         //
@@ -41,7 +43,7 @@ internal class BallsLogic : LogicAPI {
             var transform = DataAPI.CreateTransform(spawnPoint, radius);
 			var rigidBody = DataAPI.CreateRigidBody(spawnVelocity, mass);
 
-			dataBalls.Add(DataAPI.CreateBall(transform, rigidBody));
+			dataBalls.Add(DataAPI.CreateBall(i, transform, rigidBody));
 		}
 	}
 
@@ -102,13 +104,14 @@ internal class BallsLogic : LogicAPI {
     private Vector2 GetRandomVelocity() {
         var rng = new Random();
 
-        var x = (float)((rng.NextDouble() - 0.5) * 10); // 15 - [-7,5; 7.5], 10 - [-5; 5]
-        var y = (float)((rng.NextDouble() - 0.5) * 10); //
+        var x = (float)((rng.NextDouble() - 0.5) * 400); // 15 - [-7,5; 7.5], 10 - [-5; 5], 400 - [-200, 200]
+        var y = (float)((rng.NextDouble() - 0.5) * 400); //
 
         return new Vector2(x, y);
     }
 
     public override void AddBall(
+        int newIdentifier,
 		Vector2 newPosition, 
 		float newRadius,
 		Vector2 newVelocity,
@@ -121,7 +124,7 @@ internal class BallsLogic : LogicAPI {
         var transform = DataAPI.CreateTransform(newPosition, newRadius);
         var rigidBody = DataAPI.CreateRigidBody(newVelocity, newMass);
 
-        dataBalls.Add(DataAPI.CreateBall(transform, rigidBody));
+        dataBalls.Add(DataAPI.CreateBall(newIdentifier, transform, rigidBody));
 	}
 
 	public override void StartSimulation() {
@@ -129,7 +132,7 @@ internal class BallsLogic : LogicAPI {
 
 		CancelSimulationSource = new CancellationTokenSource();
 
-		for (var i = 0; i < dataBalls.GetCount(); i++) {
+        for (var i = 0; i < dataBalls.GetCount(); i++) {
 			var ball = new BallLogic(i, dataBalls.Get(i), this);
 
 			// ATTACH CALLBACKS
@@ -149,8 +152,12 @@ internal class BallsLogic : LogicAPI {
 		return dataBalls.GetCount();
 	}
 
+    public override IBallData GetBall(int index) {
+        return dataBalls.Get(index);
+    }
+
 	public override IList<IBallLogic> GetBalls() {
-		var ballsList = new List<IBallLogic>();
+        var ballsList = new List<IBallLogic>();
 		for (var i = 0; i < dataBalls.GetCount(); i++) 
 			ballsList.Add(new BallLogic(i, dataBalls.Get(i), this));
 		return ballsList;

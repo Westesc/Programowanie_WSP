@@ -21,7 +21,7 @@ public class BallsLogicTest {
 
 	[Test]
 	public void AddBallTest() {
-		ballsLogic.AddBall(boardSize / 2, sharedRadius, sharedVelocity, sharedMass);
+		ballsLogic.AddBall(0, boardSize / 2, sharedRadius, sharedVelocity, sharedMass);
 		Assert.AreEqual(1, ballsLogic.GetBallsCount());
 		Assert.AreEqual(boardSize / 2, ballsLogic.GetBalls()[0].Position);
 	}
@@ -29,6 +29,7 @@ public class BallsLogicTest {
 	[Test]
 	public void AddBallOutOfBoardTest() {
 		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(
+			0,
 			boardSize + Vector2.One * 20, 
 			sharedRadius, 
 			sharedVelocity, 
@@ -36,6 +37,7 @@ public class BallsLogicTest {
         )));
 
 		Assert.Throws<PositionIsOutOfBoardException>((() => ballsLogic.AddBall(
+			0,
 			Vector2.One * -20,
             sharedRadius,
             sharedVelocity,

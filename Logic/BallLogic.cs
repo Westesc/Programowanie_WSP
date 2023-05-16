@@ -1,7 +1,7 @@
 ﻿using Data.Components;
 using System;
+using System.Diagnostics;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using TPW.Data;
 
@@ -37,7 +37,7 @@ internal class BallLogic : IBallLogic {
 	}
 
 	public BallLogic(int newId, ITransform newTransform, IRigidBody newRigidBody, BallsLogic newOwner) {
-		ball = DataAPI.CreateBall(newTransform, newRigidBody);
+		ball = DataAPI.CreateBall(newId, newTransform, newRigidBody);
         random = new Random();
         owner = newOwner;
         Id = newId;
@@ -70,29 +70,67 @@ internal class BallLogic : IBallLogic {
     // FUNCTIONS
 
     public async void Simulate() {
-		while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
+        var timer = new Stopwatch();
+        float deltaTime = 0.0f;
+
+        while (!owner.CancelSimulationSource.Token.IsCancellationRequested) {
+
+            timer.Start();
 
             // Change Values
-            Position = MoveInsideBoard(Radius); 
+            Position = MoveInsideBoard(Radius, deltaTime); 
 
 			// Apply Values
             PositionChange?.Invoke(this, new OnBallChangeEventArgs(this));
 
-            await Task.Delay(16, owner.CancelSimulationSource.Token).ContinueWith(ignored => { });
-		}
+            await Task.Delay(4, owner.CancelSimulationSource.Token).ContinueWith(ignored => { });
+
+            timer.Stop();
+            deltaTime = timer.ElapsedMilliseconds / 1000.0f;
+            timer.Reset();
+
+        }
 	}
 
     // UTIL
-    public Vector2 MoveInsideBoard(float ballRadius) {
-		Vector2 newPosition = Position + Velocity;
 
-		if (newPosition.X < 0 || newPosition.X > owner.BoardSize.X - ballRadius)
-			Velocity = new Vector2(-Velocity.X, Velocity.Y);
+    public Vector2 MoveInsideBoard(float ballRadius, float deltaTime) {
+        
+        for (int i = 0; i < owner.GetBallsCount(); i++) {
+            var other = owner.GetBall(i);
 
-		if (newPosition.Y < 0 || newPosition.Y > owner.BoardSize.Y - ballRadius)
+            if (other.Identifier == Id) continue;
+
+            owner.simulationPause.WaitOne();
+            try {
+                if (BallCollisionLogic.IsBallsCollides(ball, other))
+                    BallCollisionLogic.HandleCollision(ball, other);
+            } finally {
+                owner.simulationPause.ReleaseMutex();
+            }
+
+        }
+
+        Vector2 newPosition = Position + Vector2.Multiply(Velocity, deltaTime);
+
+        // BOUNDRY CLAMP
+        if (newPosition.X < 0) {
+            Velocity = new Vector2(-Velocity.X, Velocity.Y);
+            newPosition.X = 0;
+        } else if (newPosition.X > owner.BoardSize.X - ballRadius) {
+            Velocity = new Vector2(-Velocity.X, Velocity.Y);
+            newPosition.X = owner.BoardSize.X - ballRadius;
+        }
+
+        if (newPosition.Y < 0) {
             Velocity = new Vector2(Velocity.X, -Velocity.Y);
+            newPosition.Y = 0;
+        } else if (newPosition.Y > owner.BoardSize.Y - ballRadius) {
+            Velocity = new Vector2(Velocity.X, -Velocity.Y);
+            newPosition.Y = owner.BoardSize.Y -ballRadius;
+        }
 
-        return Position + Velocity;
+        return newPosition;
 	}
 
 }

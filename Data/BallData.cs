@@ -1,5 +1,4 @@
 ﻿using Data.Components;
-using System.Numerics;
 
 // About
 //  Represents a drawable circular (2D) object.
@@ -7,19 +6,21 @@ using System.Numerics;
 
 namespace TPW.Data {
     public interface IBallData {
+        int Identifier { get; set; }
         ITransform Transform { get; set; }
         IRigidBody RigidBody { get; set; }
     }
 
     internal class BallData : IBallData {
+        public int Identifier { get; set; }
         public ITransform Transform { get; set; }
-
         public IRigidBody RigidBody { get; set; }
-
         public BallData (
+            int newIdentifier,
             ITransform newTransform,
             IRigidBody newRigidBody
         ) {
+            Identifier = newIdentifier;
             Transform = newTransform;
             RigidBody = newRigidBody;
         }
