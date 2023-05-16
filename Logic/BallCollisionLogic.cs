@@ -6,7 +6,7 @@ using TPW.Data;
 using TPW.Logic;
 
 namespace TPW.Logic {
-    internal class BallCollisionLogic {
+    public class BallCollisionLogic {
 
         public static bool IsBallsCollides(IBallData ball, IBallData other) {
             var centerOne = ball.Transform.Position + (Vector2.One * ball.Transform.Radius / 2) + ball.RigidBody.Velocity * (16 / 1000f);
