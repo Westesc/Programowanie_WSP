@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Data.Components {
+namespace TPW.Data.Components {
     public interface ITransform {
         Vector2 Position { get; set; }
         float Radius { get; set; }

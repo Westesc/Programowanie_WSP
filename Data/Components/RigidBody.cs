@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Data.Components {
+namespace TPW.Data.Components {
     public interface IRigidBody {
         Vector2 Velocity { get; set; }
         float Mass { get; set; }

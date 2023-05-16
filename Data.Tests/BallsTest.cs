@@ -1,5 +1,5 @@
 using System.Numerics;
-using Data.Components;
+using TPW.Data.Components;
 using NUnit.Framework;
 
 namespace TPW.Data.Tests {
@@ -22,9 +22,9 @@ namespace TPW.Data.Tests {
             IRigidBody rigidBodyTest3 = DataAPI.CreateRigidBody(new Vector2(1.1f, 0.9f), 0.7f);
 
             balls = DataAPI.CreateBallsList();
-            ball1 = DataAPI.CreateBall(transformTest1, rigidBodyTest1);
-            ball2 = DataAPI.CreateBall(transformTest2, rigidBodyTest2);
-            ball3 = DataAPI.CreateBall(transformTest3, rigidBodyTest3);
+            ball1 = DataAPI.CreateBall(0, transformTest1, rigidBodyTest1);
+            ball2 = DataAPI.CreateBall(1, transformTest2, rigidBodyTest2);
+            ball3 = DataAPI.CreateBall(2, transformTest3, rigidBodyTest3);
         }
 
         // Test:
