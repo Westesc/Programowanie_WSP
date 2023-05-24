@@ -15,8 +15,11 @@ namespace TPW.Logic;
 
 internal class BallsLogic : LogicAPI {
 
-    public readonly Mutex simulationPause = new Mutex(false); // CriticalSection Lock
+    public readonly Mutex simulationPause = new(false); // CriticalSection Lock
     private readonly DataAPI dataBalls;
+
+    // LOGGER INSTANCE
+    private readonly IBallsLogger ballsLogger = new BallsLogger(); 
 
     public CancellationTokenSource CancelSimulationSource { get; private set; }         //
     public Vector2 BoardSize { get; }
@@ -27,8 +30,9 @@ internal class BallsLogic : LogicAPI {
 		BoardSize = newBoardSize;
 	}
 
-	protected override void OnPositionChange(OnBallChangeEventArgs newArgs) {
-		base.OnPositionChange(newArgs);
+	protected override void OnPositionChange(OnBallChangeEventArgs newArguments) {
+        ballsLogger.AddQueueLog(newArguments.Ball);
+        base.OnPositionChange(newArguments);
 	}
 
 	public override void AddBalls(int newCount) {
