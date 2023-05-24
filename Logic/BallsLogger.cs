@@ -33,13 +33,16 @@ namespace TPW.Logic {
 
             // Initialize log file.
             if (File.Exists(filePath)) {
+				fileMutex.WaitOne();
                 try {
                     string input = File.ReadAllText(filePath);
                     fileJArray = JArray.Parse(input);
                     return;
                 } catch (JsonReaderException) {
                     fileJArray = new JArray();
-                }
+                } finally {
+					fileMutex.ReleaseMutex();
+				}
             }
 
             // If file doesn't exists create one.
