@@ -8,17 +8,21 @@ using System.Threading;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Timers;
 
 namespace TPW.Logic {
 
     public interface IBallsLogger {
         void AddQueueLog(IBallLogic ball);
+        public void SetTimer(double interval);
     }
 
     public class BallsLogger : IBallsLogger {
 
         private readonly string filePath;
         private Task? loggingTask;
+
+        public static System.Timers.Timer? timer;
 
         private readonly ConcurrentQueue<JObject> ballQueue = new();
 
@@ -50,6 +54,22 @@ namespace TPW.Logic {
             File.Create(filePath);
         }
 
+        public void SetTimer(double interval) {
+            // Create a timer with a two second interval.
+            timer = new System.Timers.Timer(interval);
+            // Hook up the Elapsed event for the timer. 
+            timer.Elapsed += OnTimedEvent;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e) {
+            Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}", e.SignalTime);
+            LogToFile();
+            //if (loggingTask == null || loggingTask.IsCompleted)
+            //    loggingTask = Task.Factory.StartNew(LogToFile);
+        }
+
         public void AddQueueLog(IBallLogic ball) {
             queueMutex.WaitOne();
 
@@ -57,15 +77,12 @@ namespace TPW.Logic {
                 JObject item = JObject.FromObject(ball);
                 item["Time"] = DateTime.Now.ToString("HH:mm:ss");
                 ballQueue.Enqueue(item);
-
-                if (loggingTask == null || loggingTask.IsCompleted)
-                    loggingTask = Task.Factory.StartNew(LogToFile);
             } finally {
                 queueMutex.ReleaseMutex();
             }
         }
 
-        private async Task LogToFile() {
+        private void LogToFile() {
 
             // Add logs until queue is empty.
             while (ballQueue.TryDequeue(out JObject ball)) {

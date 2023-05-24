@@ -136,6 +136,9 @@ internal class BallsLogic : LogicAPI {
 
 		CancelSimulationSource = new CancellationTokenSource();
 
+        // CREATE LOGER TIMER
+        ballsLogger.SetTimer(10000);
+
         for (var i = 0; i < dataBalls.GetCount(); i++) {
 			var ball = new BallLogic(i, dataBalls.Get(i), this);
 
