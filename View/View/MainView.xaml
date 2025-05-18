@@ -31,9 +31,9 @@
 			<Button Background="#202020" Content="➖" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Command="{Binding Decrease}"/>
 			<Button Background="#202020" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding StartSimulation}"/>
+                    Command="{Binding StartSimulation}" IsEnabled="{Binding IsStartEnabled}"/>
 			<Button Background="#202020" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding StopSimulation}"/>
+                    Command="{Binding StopSimulation}" IsEnabled="{Binding IsStopEnabled}"/>
 		</StackPanel>
 		<StackPanel Grid.Column="0" VerticalAlignment="Center" Height="400">
 			<Canvas x:Name="BallCanvas" Height="400" Width="650">

@@ -2,28 +2,27 @@
 using System.Numerics;
 using TPW.Logic;
 
-public class OnPositionChangeUiAdapterEventArgs : EventArgs {
-
-    public readonly int id;
-    public readonly Vector2 position;
-
-    public OnPositionChangeUiAdapterEventArgs(int newId, Vector2 newPosition) {
-        position = newPosition;
-        id = newId;
-    }
-}
-
-public class OnRadiusChangeUiAdapterEventArgs : EventArgs {
-    public readonly int id;
-    public readonly float radius;
-
-    public OnRadiusChangeUiAdapterEventArgs(int newId, float newRadius) {
-        radius = newRadius;
-        id = newId;
-    }
-}
-
 namespace TPW.Presentation.Model {
+
+    public class OnPositionChangeUiAdapterEventArgs : EventArgs {
+        public readonly int id;
+        public readonly Vector2 position;
+
+        public OnPositionChangeUiAdapterEventArgs(int newId, Vector2 newPosition) {
+            position = newPosition;
+            id = newId;
+        }
+    }
+
+    public class OnRadiusChangeUiAdapterEventArgs : EventArgs {
+        public readonly int id;
+        public readonly float radius;
+
+        public OnRadiusChangeUiAdapterEventArgs(int newId, float newRadius) {
+            radius = newRadius;
+            id = newId;
+        }
+    }
 
     public class MainModel {
         private readonly Vector2 boardSize;

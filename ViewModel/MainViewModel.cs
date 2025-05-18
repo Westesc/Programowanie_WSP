@@ -1,15 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TPW.Presentation.Model;
 
-// TODO:
-// 1. Move outside AsyncObservableCollection. [ and understand... ]
-// 2. Move outside RelayCommand.
-// 3. Move outside BallPosition.
-
 // About:
-// Properties inside class that derive from INotifyPropertyChanged interface and
+// Properties inside class that derive from INotifyPropertyChanged interface
 //  are marked as public can be reached inside View.
 //  eg. BallsCount, BallPosition.X, BallPosition.Y.
 //
@@ -35,6 +31,25 @@ namespace TPW.Presentation.ViewModel {
             }
         }
 
+        public bool isSimulationRunning = false;
+
+        public bool IsStartEnabled {
+            get { return !isSimulationRunning; }
+            set { 
+                isSimulationRunning = !value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsStopEnabled {
+            get { return isSimulationRunning; }
+            set
+            {
+                isSimulationRunning = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand Increase { get; }
         public ICommand Decrease { get; }
         public ICommand StartSimulation { get; }
@@ -55,6 +70,9 @@ namespace TPW.Presentation.ViewModel {
             });
 
             StartSimulation = new RelayCommand(() => {
+                IsStartEnabled = false;
+                IsStopEnabled = true;
+
                 model.SetBallNumber(BallsCount);
 
                 for (int i = 0; i < BallsCount; i++) {
@@ -78,6 +96,9 @@ namespace TPW.Presentation.ViewModel {
                 model.StopSimulation();
                 Circles.Clear();
                 model.SetBallNumber(BallsCount);
+
+                IsStopEnabled = false;
+                IsStartEnabled = true;
             });
         }
 
